@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Oefening: Spelling van het Verbum (Activiteiten)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #f4f7f6;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .instructie {
+      background: #eef6fb;
+      padding: 15px 20px;
+      border-left: 5px solid #3498db;
+      margin-bottom: 25px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+    .card {
+      background: white;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sentence-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .verbum-tag {
+      font-weight: bold;
+      color: #2c3e50;
+      min-width: 110px;
+      background: #e1edf7;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+    }
+    input[type="text"] {
+      padding: 6px 10px;
+      font-size: 16px;
+      border: 2px solid #bdc3c7;
+      border-radius: 4px;
+      width: 150px;
+      outline: none;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    input.correct {
+      border-color: #2ecc71;
+      background-color: #e8f8f5;
+    }
+    input.incorrect {
+      border-color: #e74c3c;
+      background-color: #fadbd8;
+    }
+    .feedback {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .feedback.correct { color: #27ae60; }
+    .feedback.incorrect { color: #c0392b; }
+    
+    .uitleg-box {
+      font-size: 13px;
+      color: #7f8c8d;
+      background: #fdf2e9;
+      border-left: 3px solid #e67e22;
+      padding: 6px 10px;
+      border-radius: 3px;
+      display: none;
+      margin-top: 4px;
+    }
+    .uitleg-box.visible {
+      display: block;
+    }
+
+    .button-group {
+      position: sticky;
+      bottom: 20px;
+      background: #ffffff;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button.reset-btn {
+      background-color: #95a5a6;
+    }
+    button.reset-btn:hover {
+      background-color: #7f8c8d;
+    }
+    .score-box {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spelling van het Verbum: Woordenlijst Activiteiten (100 Opgaven)</h1>
+
+  <div class="instructie">
+    <p><strong>Instructie:</strong> Vul de juiste vorm van het verbum in de presens (tegenwoordige tijd) in. Je krijgt direct feedback zodra je typt!</p>
+    <ul>
+      <li>Bij een <strong>fout antwoord</strong> krijg je meteen een tip met de grammaticaregel.</li>
+      <li>Let op het subject: <strong>ik</strong> (ik-vorm), <strong>hij/zij/singularis</strong> (ik-vorm + t) of <strong>pluralis</strong> (infinitief).</li>
+      <li>Let op bij <strong>inversie</strong>: als 'jij/je' ACHTER het verbum staat, gebruik je enkel de ik-vorm (zonder extra -t).</li>
+      <li>Denk aan vocalen (lang/kort in een gesloten/open stuk) en consonanten (v/f en z/s).</li>
+    </ul>
+  </div>
+
+  <form id="quizForm">
+    <div id="questionsContainer"></div>
+
+    <div class="button-group">
+      <div>
+        <button type="button" onclick="checkAllAnswers()">Controleer alles</button>
+        <button type="button" class="reset-btn" onclick="resetQuiz()">Probeer opnieuw</button>
+      </div>
+      <div id="score" class="score-box">Live Score: 0 / 100</div>
+    </div>
+  </form>
+
+  <script>
+    const questions = [
+      // Deel 1: Directe volgorde (Onderwerp + Verbum) met alle werkwoorden uit de woordenlijst
+      { verb: "aandoen", before: "1. Ik", after: "elke ochtend mijn kleren aan.", ans: "doe", exp: "Scheidbaar verbum 'aandoen': subject is 'ik' → ik-vorm van doen is 'doe'." },
+      { verb: "beantwoorden", before: "2. Hij", after: "de e-mails van de klanten.", ans: "beantwoordt", exp: "Subject is 'hij' → ik-vorm + t (beantwoord + t = beantwoordt)." },
+      { verb: "betalen", before: "3. Wij", after: "de rekeningen met de bankkaart.", ans: "betalen", exp: "Subject is pluralis ('wij') → gebruik de infinitief." },
+      { verb: "bezoeken", before: "4. Mijn ouders", after: "hun vrienden in het weekend.", ans: "bezoeken", exp: "Subject is pluralis ('mijn ouders') → gebruik de infinitief." },
+      { verb: "brengen", before: "5. Vader", after: "de kinderen naar school.", ans: "brengt", exp: "Subject is singularis ('vader') → ik-vorm + t (breng + t)." },
+      { verb: "drinken", before: "6. De atleten", after: "voldoende water tijdens de pauze.", ans: "drinken", exp: "Subject is pluralis ('de atleten') → gebruik de infinitief." },
+      { verb: "doen", before: "7. Ik", after: "op zaterdag de boodschappen.", ans: "doe", exp: "Subject is 'ik' → ik-vorm van doen is 'doe'." },
+      { verb: "eten", before: "8. De kinderen", after: "graag spaghetti.", ans: "eten", exp: "Subject is pluralis ('de kinderen') → gebruik de infinitief." },
+      { verb: "fitnessen", before: "9. Hij", after: "twee keer per week in het fitnesscentrum.", ans: "fitnest", exp: "Subject is singularis ('hij') → ik-vorm + t (fitnes + t)." },
+      { verb: "gaan", before: "10. Vanavond", after: "wij naar de cinema.", ans: "gaan", exp: "Inversie met pluralis ('wij') → gebruik de infinitief." },
+      { verb: "gaan", before: "11. Moeder", after: "elke vrijdag naar de markt.", ans: "gaat", exp: "Subject is singularis ('moeder') → ik-vorm + t (ga + t)." },
+      { verb: "gaan", before: "12. De kinderen", after: "samen naar de speeltuin.", ans: "gaan", exp: "Subject is pluralis ('de kinderen') → gebruik de infinitief." },
+      { verb: "gaan", before: "13. Mijn broer", after: "om zeven uur naar de voetbaltraining.", ans: "gaat", exp: "Subject is singularis ('mijn broer') → ik-vorm + t (ga + t)." },
+      { verb: "gaan", before: "14. Vrijdagavond", after: "de vrienden op café.", ans: "gaan", exp: "Inversie met pluralis ('de vrienden') → gebruik de infinitief." },
+      { verb: "gaan", before: "15. Mijn man en ik", after: "op restaurant voor onze trouwdag.", ans: "gaan", exp: "Subject is pluralis ('mijn man en ik' = wij) → gebruik de infinitief." },
+      { verb: "halen", before: "16. Oma", after: "de kinderen van school.", ans: "haalt", exp: "Subject is singularis ('oma') → ik-vorm + t. Lange aa: haal + t." },
+      { verb: "helpen", before: "17. Ik", after: "mijn collega met het zware werk.", ans: "help", exp: "Subject is 'ik' → enkel de ik-vorm (help)." },
+      { verb: "joggen", before: "18. Mijn vader", after: "elke ochtend in het park.", ans: "jogt", exp: "Subject is singularis ('mijn vader') → ik-vorm + t (jog + t)." },
+      { verb: "kijken", before: "19. Jullie", after: "naar een mooie film.", ans: "kijken", exp: "Subject is pluralis ('jullie') → gebruik de infinitief." },
+      { verb: "kijken", before: "20. Opa", after: "elke avond naar tv.", ans: "kijkt", exp: "Subject is singularis ('opa') → ik-vorm + t (kijk + t)." },
+      { verb: "koken", before: "21. De chef-kok", after: "een heerlijke maaltijd.", ans: "kookt", exp: "Subject is singularis → ik-vorm + t. Lange oo: kook + t." },
+      { verb: "kopen", before: "22. Ik", after: "verse groenten op de markt.", ans: "koop", exp: "Subject is 'ik' → ik-vorm. Lange oo in een gesloten stuk: koop." },
+      { verb: "lezen", before: "23. De cursist", after: "een interessant boek.", ans: "leest", exp: "Subject is singularis → ik-vorm + t. De 'z' wordt een 's' + t: leest." },
+      { verb: "lezen", before: "24. Mijn baas", after: "elke ochtend alle e-mails.", ans: "leest", exp: "Subject is singularis ('mijn baas') → ik-vorm + t (lees + t)." },
+      { verb: "lopen", before: "25. Ik", after: "elke dag naar het busstation.", ans: "loop", exp: "Subject is 'ik' → ik-vorm. Lange oo: loop." },
+      { verb: "luisteren", before: "26. Wij", after: "in de auto naar de radio.", ans: "luisteren", exp: "Subject is pluralis ('wij') → gebruik de infinitief." },
+      { verb: "leren", before: "27. De studenten", after: "veel nieuwe Nederlandse woorden.", ans: "leren", exp: "Subject is pluralis ('de studenten') → gebruik de infinitief." },
+      { verb: "maken", before: "28. Ik", after: "een afspraak bij de dokter.", ans: "maak", exp: "Subject is 'ik' → ik-vorm. Lange aa in een gesloten stuk: maak." },
+      { verb: "maken", before: "29. De bediende", after: "de facturen voor het bedrijf.", ans: "maakt", exp: "Subject is singularis ('de bediende') → ik-vorm + t (maak + t)." },
+      { verb: "nemen", before: "30. Wij", after: "elke morgen de bus naar het werk.", ans: "nemen", exp: "Subject is pluralis ('wij') → gebruik de infinitief." },
+      { verb: "nemen", before: "31. Hij", after: "een warme douche na het sporten.", ans: "neemt", exp: "Subject is singularis ('hij') → ik-vorm + t. Lange ee: neem + t." },
+      { verb: "ontbijten", before: "32. De familie", after: "om zeven uur in de keuken.", ans: "ontbijt", exp: "Subject is singularis ('de familie'). Ik-vorm eindigt al op -t, dus geen extra -t." },
+      { verb: "ontspannen", before: "33. Ik", after: "mij met een goed boek.", ans: "ontspan", exp: "Subject is 'ik' → ik-vorm. Enkele n in gesloten stuk: ontspan." },
+      { verb: "poetsen", before: "34. Maria", after: "de ramen van het huis.", ans: "poetst", exp: "Subject is singularis ('Maria') → ik-vorm + t (poets + t)." },
+      { verb: "poetsen", before: "35. De kinderen", after: "hun tanden voor het slapengaan.", ans: "poetsen", exp: "Subject is pluralis ('de kinderen') → gebruik de infinitief." },
+      { verb: "praten", before: "36. De cursisten", after: "met elkaar in de klas.", ans: "praten", exp: "Subject is pluralis ('de cursisten') → gebruik de infinitief." },
+      { verb: "rijden", before: "37. Hij", after: "met de auto naar het postkantoor.", ans: "rijdt", exp: "Subject is 'hij' → ik-vorm + t (rijd + t)." },
+      { verb: "slapen", before: "38. De baby", after: "al de hele nacht.", ans: "slaapt", exp: "Subject is singularis ('de baby') → ik-vorm + t. Lange aa: slaap + t." },
+      { verb: "spelen", before: "39. Mijn broer", after: "heel goed gitaar.", ans: "speelt", exp: "Subject is singularis ('mijn broer') → ik-vorm + t. Lange ee: speel + t." },
+      { verb: "spelen", before: "40. De moeder", after: "liefdevol met de baby.", ans: "speelt", exp: "Subject is singularis ('de moeder') → ik-vorm + t (speel + t)." },
+      { verb: "stofzuigen", before: "41. Ik", after: "elke vrijdag het hele appartement.", ans: "stofzuig", exp: "Subject is 'ik' → ik-vorm (stofzuig)." },
+      { verb: "strijken", before: "42. Zij (vrouw)", after: "haar kleren heel zorgvuldig.", ans: "strijkt", exp: "Subject is singularis ('zij') → ik-vorm + t (strijk + t)." },
+      { verb: "studeren", before: "43. De cursisten", after: "voor de grote toets.", ans: "studeren", exp: "Subject is pluralis ('de cursisten') → gebruik de infinitief." },
+      { verb: "surfen", before: "44. Jullie", after: "op het internet om informatie te zoeken.", ans: "surfen", exp: "Subject is pluralis ('jullie') → gebruik de infinitief." },
+      { verb: "telefoneren", before: "45. Ik", after: "met mijn grootmoeder.", ans: "telefoneer", exp: "Subject is 'ik' → ik-vorm. Lange ee: telefoneer." },
+      { verb: "tennissen", before: "46. Wij", after: "elke zondag op de sportclub.", ans: "tennissen", exp: "Subject is pluralis ('wij') → gebruik de infinitief." },
+      { verb: "vergaderen", before: "47. De baas", after: "met alle medewerkers.", ans: "vergadert", exp: "Subject is singularis ('de baas') → ik-vorm + t (vergader + t)." },
+      { verb: "volleyballen", before: "48. De jongeren", after: "elke week in de sporthal.", ans: "volleyballen", exp: "Subject is pluralis ('de jongeren') → gebruik de infinitief." },
+      { verb: "volgen", before: "49. Hij", after: "een cursus Nederlands aan het CVO.", ans: "volgt", exp: "Subject is singularis ('hij') → ik-vorm + t (volg + t)." },
+      { verb: "wandelen", before: "50. De familie", after: "in het park bij de rivier.", ans: "wandelt", exp: "Subject is singularis ('de familie') → ik-vorm + t (wandel + t)." },
+      { verb: "wassen", before: "51. Moeder", after: "de baby in het kleine bad.", ans: "wast", exp: "Subject is singularis ('moeder') → ik-vorm + t (was + t)." },
+      { verb: "wassen", before: "52. Wij", after: "onze kleren in de wasmachine.", ans: "wassen", exp: "Subject is pluralis ('wij') → gebruik de infinitief." },
+      { verb: "werken", before: "53. Ik", after: "van negen tot vijf uur.", ans: "werk", exp: "Subject is 'ik' → ik-vorm (werk)." },
+      { verb: "winkelen", before: "54. Zij (pluralis)", after: "in het grote winkelcentrum.", ans: "winkelen", exp: "Subject is pluralis ('zij' meervoud) → gebruik de infinitief." },
+      { verb: "zwemmen", before: "55. De kinderen", after: "in het overdekte zwembad.", ans: "zwemmen", exp: "Subject is pluralis ('de kinderen') → gebruik de infinitief." },
+
+      // Deel 2: Inversie & Vraagzinnen met 'jij/je' en specifieke activiteit-zinnen uit de lijst
+      { verb: "aandoen", before: "56. Welke kleren", after: "jij vandaag aan?", ans: "doe", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (doe)." },
+      { verb: "beantwoorden", before: "57. Wanneer", after: "jij mijn e-mails?", ans: "beantwoord", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (beantwoord)." },
+      { verb: "betalen", before: "58. Hoeveel", after: "jij voor de rekeningen?", ans: "betaal", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (betaal)." },
+      { verb: "bezoeken", before: "59. Welke vrienden", after: "jij dit weekend?", ans: "bezoek", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (bezoek)." },
+      { verb: "brengen", before: "60. Hoe", after: "jij de kinderen naar school?", ans: "breng", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (breng)." },
+      { verb: "drinken", before: "61. Wat", after: "jij liever: water of frisdrank?", ans: "drink", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (drink)." },
+      { verb: "doen", before: "62. Waar", after: "jij meestal de boodschappen?", ans: "doe", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm van doen is 'doe'." },
+      { verb: "eten", before: "63. Met wie", after: "jij vanavond spaghetti?", ans: "eet", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm van eten is 'eet'." },
+      { verb: "fitnessen", before: "64. Hoe vaak per week", after: "jij?", ans: "fitnes", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (fitnes)." },
+      { verb: "gaan", before: "65. Om hoe laat", after: "jij naar de cinema?", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm van gaan is 'ga'." },
+      { verb: "gaan", before: "66. Wanneer", after: "jij naar de markt?", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm is 'ga'." },
+      { verb: "gaan", before: "67. Met wie", after: "jij naar de speeltuin?", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm is 'ga'." },
+      { verb: "gaan", before: "68. Hoe", after: "jij naar de voetbaltraining?", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm is 'ga'." },
+      { verb: "gaan", before: "69. Soms", after: "jij met collega's op café.", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm is 'ga'." },
+      { verb: "gaan", before: "70. Welk weekend", after: "jij op restaurant?", ans: "ga", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm is 'ga'." },
+      { verb: "halen", before: "71. Hoe laat", after: "jij de kinderen van school?", ans: "haal", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (haal)." },
+      { verb: "helpen", before: "72. Waarmee", after: "jij mij vandaag?", ans: "help", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (help)." },
+      { verb: "joggen", before: "73. Waar", after: "jij 's morgens vroeg?", ans: "jog", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (jog)." },
+      { verb: "kijken", before: "74. Naar welke film", after: "jij het liefst?", ans: "kijk", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (kijk)." },
+      { verb: "kijken", before: "75. Waarom", after: "jij zo veel tv?", ans: "kijk", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (kijk)." },
+      { verb: "koken", before: "76. Wat", after: "jij voor het feestmaal?", ans: "kook", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (kook). Lange oo." },
+      { verb: "kopen", before: "77. Wat", after: "jij allemaal in de winkel?", ans: "koop", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (koop). Lange oo." },
+      { verb: "lezen", before: "78. Welk boek", after: "jij op dit moment?", ans: "lees", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (lees). De 'z' wordt 's'." },
+      { verb: "lezen", before: "79. Hoeveel e-mails", after: "jij per dag?", ans: "lees", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (lees)." },
+      { verb: "lopen", before: "80. Waarom", after: "jij zo snel naar het station?", ans: "loop", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (loop)." },
+      { verb: "luisteren", before: "81. Naar welk radiostation", after: "jij het liefst?", ans: "luister", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (luister)." },
+      { verb: "leren", before: "82. Welke taal", after: "jij op de school?", ans: "leer", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (leer)." },
+      { verb: "maken", before: "83. Wanneer", after: "jij een afspraak bij de dokter?", ans: "maak", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (maak)." },
+      { verb: "maken", before: "84. Hoe laat", after: "jij de facturen voor de klant?", ans: "maak", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (maak)." },
+      { verb: "nemen", before: "85. Waarom", after: "jij niet de bus naar de stad?", ans: "neem", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (neem)." },
+      { verb: "nemen", before: "86. Wanneer", after: "jij een douche?", ans: "neem", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (neem)." },
+      { verb: "ontbijten", before: "87. Om hoe laat", after: "jij op zondag?", ans: "ontbijt", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (ontbijt)." },
+      { verb: "ontspannen", before: "88. Hoe", after: "jij je na een drukke dag?", ans: "ontspan", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (ontspan)." },
+      { verb: "poetsen", before: "89. Hoe vaak", after: "jij de ramen?", ans: "poets", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (poets)." },
+      { verb: "poetsen", before: "90. Wanneer", after: "jij je tanden?", ans: "poets", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm (poets)." },
+
+      // Deel 3: Extra gevarieerde zinnen met Inversie en Derde persoon / Pluralis
+      { verb: "praten", before: "91. Soms", after: "jij wat te snel.", ans: "praat", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm van praten is 'praat'." },
+      { verb: "rijden", before: "92. Morgen", after: "vader met de wagen naar het postkantoor.", ans: "rijdt", exp: "Inversie: subject is singularis ('vader') ACHTER het verbum → ik-vorm + t (rijd + t)." },
+      { verb: "slapen", before: "93. Hoeveel uur", after: "de baby elke nacht?", ans: "slaapt", exp: "Inversie: subject is singularis ('de baby') ACHTER het verbum → ik-vorm + t (slaapt)." },
+      { verb: "stofzuigen", before: "94. Nu", after: "ik het hele appartement.", ans: "stofzuig", exp: "Inversie met 'ik' ACHTER het verbum → enkel de ik-vorm (stofzuig)." },
+      { verb: "strijken", before: "95. Morgen", after: "zij haar kleren voor het feest.", ans: "strijkt", exp: "Inversie: subject is singularis ('zij') ACHTER het verbum → ik-vorm + t (strijk + t)." },
+      { verb: "studeren", before: "96. Waarom", after: "jij niet in de bibliotheek?", ans: "studeer", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (studeer)." },
+      { verb: "surfen", before: "97. Elke dag", after: "jij op het internet.", ans: "surf", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (surf)." },
+      { verb: "telefoneren", before: "98. Met wie", after: "jij op dit moment?", ans: "telefoneer", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (telefoneer)." },
+      { verb: "volgen", before: "99. Welke cursus", after: "jij aan het CVO?", ans: "volg", exp: "Inversie met 'jij' ACHTER het verbum → ik-vorm zonder -t (volg)." },
+      { verb: "zwemmen", before: "100. In de zomer", after: "de kinderen in de zee.", ans: "zwemmen", exp: "Inversie: subject is pluralis ('de kinderen') ACHTER het verbum → gebruik de infinitief." }
+    ];
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+      
+      questions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="sentence-row">
+            <span class="verbum-tag">(${q.verb})</span>
+            ${q.before} 
+            <input type="text" data-answer="${q.ans}" data-exp="${q.exp}" id="q_${index}" autocomplete="off" spellcheck="false"> 
+            ${q.after}
+            <span class="feedback"></span>
+          </div>
+          <div class="uitleg-box" id="uitleg_${index}"></div>
+        `;
+        container.appendChild(card);
+      });
+
+      const inputs = container.querySelectorAll('input[type="text"]');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => checkSingleAnswer(input, false));
+        input.addEventListener('blur', () => checkSingleAnswer(input, true));
+      });
+
+      updateLiveScore();
+    }
+
+    function checkSingleAnswer(input, isBlur) {
+      const userAnswer = input.value.trim().toLowerCase();
+      const correctAnswer = input.getAttribute('data-answer').toLowerCase();
+      const explanationText = input.getAttribute('data-exp');
+      
+      const sentenceRow = input.parentElement;
+      const feedbackSpan = sentenceRow.querySelector('.feedback');
+      const card = sentenceRow.parentElement;
+      const uitlegBox = card.querySelector('.uitleg-box');
+
+      if (userAnswer === '') {
+        input.className = '';
+        feedbackSpan.textContent = '';
+        feedbackSpan.className = 'feedback';
+        uitlegBox.className = 'uitleg-box';
+        uitlegBox.textContent = '';
+      } else if (userAnswer === correctAnswer) {
+        input.className = 'correct';
+        feedbackSpan.textContent = '✓ Correct';
+        feedbackSpan.className = 'feedback correct';
+        uitlegBox.className = 'uitleg-box';
+        uitlegBox.textContent = '';
+      } else {
+        if (isBlur || userAnswer.length >= correctAnswer.length) {
+          input.className = 'incorrect';
+          feedbackSpan.textContent = '✗ (' + correctAnswer + ')';
+          feedbackSpan.className = 'feedback incorrect';
+          
+          uitlegBox.textContent = '💡 Grammatica-tip: ' + explanationText;
+          uitlegBox.className = 'uitleg-box visible';
+        } else {
+          input.className = '';
+          feedbackSpan.textContent = '';
+          feedbackSpan.className = 'feedback';
+          uitlegBox.className = 'uitleg-box';
+          uitlegBox.textContent = '';
+        }
+      }
+
+      updateLiveScore();
+    }
+
+    function checkAllAnswers() {
+      const inputs = document.querySelectorAll('#quizForm input[type="text"]');
+      inputs.forEach(input => {
+        checkSingleAnswer(input, true);
+      });
+      updateLiveScore();
+    }
+
+    function updateLiveScore() {
+      const inputs = document.querySelectorAll('#quizForm input[type="text"]');
+      let score = 0;
+      inputs.forEach(input => {
+        if (input.classList.contains('correct')) {
+          score++;
+        }
+      });
+      const scoreBox = document.getElementById('score');
+      scoreBox.textContent = 'Live Score: ' + score + ' / ' + inputs.length;
+    }
+
+    function resetQuiz() {
+      const inputs = document.querySelectorAll('#quizForm input[type="text"]');
+      inputs.forEach(input => {
+        input.value = '';
+        input.className = '';
+        const card = input.parentElement.parentElement;
+        const feedbackSpan = input.nextElementSibling;
+        const uitlegBox = card.querySelector('.uitleg-box');
+        
+        feedbackSpan.textContent = '';
+        feedbackSpan.className = 'feedback';
+        uitlegBox.className = 'uitleg-box';
+        uitlegBox.textContent = '';
+      });
+      updateLiveScore();
+    }
+
+    renderQuestions();
+  </script>
+
+</body>
+</html>
